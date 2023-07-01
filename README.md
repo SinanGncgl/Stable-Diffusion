@@ -50,6 +50,15 @@ Note since I trained this model there is now an 'official' super res model for S
 
 ## Fine tuning
 
+```bash
+git clone https://github.com/justinpinkney/stable-diffusion.git
+cd stable-diffusion
+conda create -n sd python=3.8
+conda activate sd
+pip install -U pip
+pip install -r requirements.txt
+```
+
 Makes it easy to fine tune Stable Diffusion on your own dataset. For example generating new custom data from any condition you want.
 
 First download first stage checkpoints
