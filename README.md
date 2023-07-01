@@ -50,7 +50,16 @@ Note since I trained this model there is now an 'official' super res model for S
 
 ## Fine tuning
 
-Makes it easy to fine tune Stable Diffusion on your own dataset. For example generating new Pokemon from text!
+Makes it easy to fine tune Stable Diffusion on your own dataset. For example generating new custom data from any condition you want.
+
+First download first stage checkpoints
+```bash
+sh scripts/download_first_stages.sh
+```
+Then download the pre-trained stable diffusion ema model
+```bash
+wget https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4-full-ema.ckpt -P models/ldm/stable-diffusion-v1/
+```
 
 [![Open in Replicate](https://img.shields.io/badge/%F0%9F%9A%80-Open%20in%20Replicate-%23fff891)](https://replicate.com/lambdal/text-to-pokemon)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/LambdaLabsML/lambda-diffusers/blob/main/notebooks/pokemon_demo.ipynb)
