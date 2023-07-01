@@ -798,6 +798,8 @@ if __name__ == "__main__":
                 rank_zero_print("unexpected keys:")
                 rank_zero_print(u)
 
+            print(f"Finetune ckpt succesfully loaded from {opt.finetune_from}")
+
         # trainer and callbacks
         trainer_kwargs = dict()
 
