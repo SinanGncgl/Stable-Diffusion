@@ -11,7 +11,7 @@ model:
     cond_stage_key: "condition"
     image_size: 84
     channels: 4
-    cond_stage_trainable: false 
+    cond_stage_trainable: true # we will freeze the network but add additional linear layer to map vector to desired shape for unet 
     conditioning_key: crossattn
     monitor: val/loss_simple_ema
     scale_factor: 0.18215
@@ -38,7 +38,7 @@ model:
         num_heads: 8
         use_spatial_transformer: True
         transformer_depth: 1
-        context_dim: 640 # this condition is coming from condition stage embedder (FrozenResnetImageEmbedder)
+        context_dim: 768 # this condition is coming from condition stage embedder (FrozenResnetImageEmbedder)
         use_checkpoint: True
         legacy: False
 
@@ -51,7 +51,7 @@ model:
         ddconfig:
           double_z: true
           z_channels: 4
-          resolution: 256
+          resolution: 84
           in_channels: 3
           out_ch: 3
           ch: 128
@@ -80,15 +80,15 @@ data:
     num_workers: 2
     num_val_workers: 0 # Avoid a weird val dataloader issue
     train:
-      target: ldm.data.miniimagenet.MiniImageNetTrain
+      target: ldm.loader.miniimagenet.MiniImageNetTrain
       params:
         root: ./data/miniimagenet
-        img_size: 84
+        image_size: 84
     validation:
-      target: ldm.data.miniimagenet.MiniImageNetVal
+      target: ldm.loader.miniimagenet.MiniImageNetVal
       params:
         root: ./data/miniimagenet
-        img_size: 84
+        image_size: 84
 
 
 lightning:
