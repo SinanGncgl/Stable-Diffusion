@@ -718,19 +718,7 @@ class LatentDiffusion(DDPM):
         print("Initializing first stage model (autoencoder)...")
         model = instantiate_from_config(config)
         # make sure autoencoder is loaded, maybe I am double loading it idk but to make sure...
-        data = torch.load(config.ckpt_path, map_location="cpu")
-        if "state_dict" not in list(data.keys()):
-            raise ValueError("No key named `state_dict` found.")
-        state_dict = data["state_dict"]
-        layers_to_remove = []
-        for key in state_dict:
-            if key.startswith("loss"):
-                layers_to_remove.append(key)
-        for key in layers_to_remove:
-            del state_dict[key]
-
-        model.load_state_dict(state_dict)
-        print(f"First stage model loaded from ckpt {config.ckpt_path}")
+        model.init_from_ckpt(path=config.ckpt_path, ignore_keys=["loss"])
         self.first_stage_model = model.eval()
         self.first_stage_model.train = disabled_train
         for param in self.first_stage_model.parameters():
