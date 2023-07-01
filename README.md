@@ -51,7 +51,7 @@ Note since I trained this model there is now an 'official' super res model for S
 ## Fine tuning
 
 ```bash
-git clone https://github.com/justinpinkney/stable-diffusion.git
+git clone https://github.com/SinanGncgl/Stable-Diffusion.git
 cd stable-diffusion
 conda create -n sd python=3.8
 conda activate sd
