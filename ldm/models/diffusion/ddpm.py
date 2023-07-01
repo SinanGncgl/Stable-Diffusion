@@ -653,6 +653,7 @@ class LatentDiffusion(DDPM):
 
         self.restarted_from_ckpt = False
         if ckpt_path is not None:
+            print(f"Latent Diffusion ckpt is not None, initializing model using ckpt from {ckpt_path}...")
             self.init_from_ckpt(ckpt_path, ignore_keys)
             self.restarted_from_ckpt = True
 
