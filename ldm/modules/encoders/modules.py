@@ -435,7 +435,7 @@ class FrozenResNetImageEmbedder(AbstractEncoder):
     def __init__(
         self,
         device="cpu",
-        ckpt_path="models/embedder/rfs.pth",
+        ckpt_path="models_ckpts/embedder/rfs.pth",
         num_classes=64,
     ):
         super().__init__()
