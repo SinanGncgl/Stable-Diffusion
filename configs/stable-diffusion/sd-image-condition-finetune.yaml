@@ -38,7 +38,7 @@ model:
         num_heads: 8
         use_spatial_transformer: True
         transformer_depth: 1
-        context_dim: 640
+        context_dim: 640 # this condition is coming from condition stage embedder (FrozenResnetImageEmbedder)
         use_checkpoint: True
         legacy: False
 
