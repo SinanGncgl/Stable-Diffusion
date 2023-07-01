@@ -653,7 +653,9 @@ class LatentDiffusion(DDPM):
 
         self.restarted_from_ckpt = False
         if ckpt_path is not None:
-            print(f"Latent Diffusion ckpt is not None, initializing model using ckpt from {ckpt_path}...")
+            print(
+                f"Latent Diffusion ckpt is not None, initializing model using ckpt from {ckpt_path}..."
+            )
             self.init_from_ckpt(ckpt_path, ignore_keys)
             self.restarted_from_ckpt = True
 
@@ -713,7 +715,22 @@ class LatentDiffusion(DDPM):
             self.make_cond_schedule()
 
     def instantiate_first_stage(self, config):
+        print("Initializing first stage model (autoencoder)...")
         model = instantiate_from_config(config)
+        # make sure autoencoder is loaded, maybe I am double loading it idk but to make sure...
+        data = torch.load(config.ckpt_path, map_location="cpu")
+        if "state_dict" not in list(data.keys()):
+            raise ValueError("No key named `state_dict` found.")
+        state_dict = data["state_dict"]
+        layers_to_remove = []
+        for key in state_dict:
+            if key.startswith("loss"):
+                layers_to_remove.append(key)
+        for key in layers_to_remove:
+            del state_dict[key]
+
+        model.load_state_dict(state_dict)
+        print(f"First stage model loaded from ckpt {config.ckpt_path}")
         self.first_stage_model = model.eval()
         self.first_stage_model.train = disabled_train
         for param in self.first_stage_model.parameters():
@@ -733,12 +750,19 @@ class LatentDiffusion(DDPM):
                 self.cond_stage_model = model.eval()
                 self.cond_stage_model.train = disabled_train
                 for param in self.cond_stage_model.parameters():
+                    print("condition state freezing param => ", param)
                     param.requires_grad = False
+
         else:
+            print("Training conditional stage model too.")
             assert config != "__is_first_stage__"
             assert config != "__is_unconditional__"
             model = instantiate_from_config(config)
             self.cond_stage_model = model
+            print("Trainable layers of the condition stage models are;")
+            for name, param in self.cond_stage_model.named_parameters():
+                if param.requires_grad:
+                    print(f"{name} : requires_grad: {param.requires_grad}")
 
     def _get_denoise_row_from_list(
         self, samples, desc="", force_no_decoder_quantization=False

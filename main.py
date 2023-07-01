@@ -13,7 +13,7 @@ from PIL import Image
 
 from pytorch_lightning import seed_everything
 from pytorch_lightning.trainer import Trainer
-from pytorch_lightning.callbacks import Callback
+from pytorch_lightning.callbacks import Callback, LearningRateMonitor  # noqa
 from pytorch_lightning.utilities.distributed import rank_zero_only
 from pytorch_lightning.utilities import rank_zero_info
 
@@ -761,6 +761,14 @@ if __name__ == "__main__":
                     "Found nested key 'state_dict' in checkpoint, loading this instead"
                 )
                 old_state = old_state["state_dict"]
+
+            # remove condition state keys because we are replacing it with custom one
+            layers_to_remove = []
+            for key in old_state:
+                if key.startswith("cond_stage_model"):
+                    layers_to_remove.append(key)
+            for key in layers_to_remove:
+                del old_state[key]
 
             # Check if we need to port weights from 4ch input to 8ch
             in_filters_load = old_state["model.diffusion_model.input_blocks.0.0.weight"]

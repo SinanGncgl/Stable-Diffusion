@@ -446,7 +446,9 @@ class FrozenResNetImageEmbedder(AbstractEncoder):
         self.model.load_state_dict(ckpt["model"])
         print(f"Resnet model ckpt loaded from {ckpt_path}")
         # freeze the model and switch to eval mode
-        # self.freeze_model()
+        self.freeze_model()
+        # only train mapping layer
+        self.mapping_layer = nn.Linear(640, 768)  # pre-trained unet context_dim
 
     def freeze_model(self):
         for p in self.model.parameters():
@@ -457,7 +459,8 @@ class FrozenResNetImageEmbedder(AbstractEncoder):
         # x is assumed to be in range [-1,1]
         feat_image, _ = self.model(x, is_feat=True)
         imgs_features = feat_image[-1].view(feat_image.size(0), -1)
-        return imgs_features.float()
+        context = self.mapping_layer(imgs_features)
+        return context.float()
 
     def encode(self, im):
         return self(im).unsqueeze(1)
