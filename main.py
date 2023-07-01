@@ -792,6 +792,7 @@ if __name__ == "__main__":
 
             m, u = model.load_state_dict(old_state, strict=False)
             if len(m) > 0:
+                # TODO: ignore conditioner params prevent unnecessary output
                 rank_zero_print("missing keys:")
                 rank_zero_print(m)
             if len(u) > 0:

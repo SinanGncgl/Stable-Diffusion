@@ -440,7 +440,7 @@ class FrozenResNetImageEmbedder(AbstractEncoder):
     ):
         super().__init__()
         self.model = resnet12(
-            avg_pool=True, drop_rate=0.1, dropblock_size=5, num_classes=num_classes
+            avg_pool=True, drop_rate=0.0, dropblock_size=5, num_classes=num_classes
         ).to(device)
         ckpt = torch.load(ckpt_path, map_location=device)
         self.model.load_state_dict(ckpt["model"])
@@ -457,8 +457,12 @@ class FrozenResNetImageEmbedder(AbstractEncoder):
 
     def forward(self, x):
         # x is assumed to be in range [-1,1]
+        if isinstance(x, list):
+            # [""] denotes condition dropout for ucg
+            device = self.mapping_layer.weight.device
+            return torch.zeros(1, 768, device=device)
         feat_image, _ = self.model(x, is_feat=True)
-        imgs_features = feat_image[-1].view(feat_image.size(0), -1)
+        imgs_features = feat_image[-1].view(x.size(0), -1)
         context = self.mapping_layer(imgs_features)
         return context.float()
 

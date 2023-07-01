@@ -16,3 +16,6 @@ im-examples/
 data/
 scratch/
 models_ckpts/
+*slurm
+*.err
+*.out
