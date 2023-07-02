@@ -43,7 +43,7 @@ model:
 
     first_stage_config:
       target: ldm.models.autoencoder.AutoencoderKL
-      ckpt_path: "models/first_stage_models/kl-f8/model.ckpt"
+      ckpt_path: "models_ckpts/first_stage_models/kl-f8/model.ckpt"
       params:
         embed_dim: 4
         monitor: val/rec_loss
@@ -76,7 +76,7 @@ data:
     num_workers: 4
     num_val_workers: 0 # Avoid a weird val dataloader issue
     train:
-      target: ldm.data.simple.hf_dataset
+      target: ldm.loader.pokemon.hf_dataset
       params:
         name: lambdalabs/pokemon-blip-captions
         image_transforms:
@@ -89,7 +89,7 @@ data:
             size: 512
         - target: torchvision.transforms.RandomHorizontalFlip
     validation:
-      target: ldm.data.simple.TextOnly
+      target: ldm.loader.pokemon.TextOnly
       params:
         captions:
         - "A pokemon with green eyes, large wings, and a hat"
@@ -105,7 +105,7 @@ lightning:
 
   modelcheckpoint:
     params:
-      every_n_train_steps: 2000
+      every_n_train_steps: 1000
       save_top_k: -1
       monitor: null
 
@@ -113,7 +113,7 @@ lightning:
     image_logger:
       target: main.ImageLogger
       params:
-        batch_frequency: 2000
+        batch_frequency: 1000
         max_images: 4
         increase_log_steps: False
         log_first_step: True

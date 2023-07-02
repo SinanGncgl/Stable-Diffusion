@@ -738,7 +738,6 @@ class LatentDiffusion(DDPM):
                 self.cond_stage_model = model.eval()
                 self.cond_stage_model.train = disabled_train
                 for param in self.cond_stage_model.parameters():
-                    print("condition state freezing param => ", param)
                     param.requires_grad = False
 
         else:
